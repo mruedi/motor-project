@@ -5,7 +5,7 @@ from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_StepperMotor
 import time
 import atexit
 
-mh = Adafruit_MotorHAT(addr = 0x60)
+mh = Adafruit_MotorHAT()
 
 # turn off motors automatically at shutdown
 def turnOffMotors():
