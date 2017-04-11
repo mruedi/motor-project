@@ -16,7 +16,14 @@ atexit.register(turnOffMotors)
 #Request length parameters by user
 lengthTotal = int(input('Input total required rod length in inches [in]: '))
 lengthRodEnd = int(input('Input required distance between rod end and bearing center in inches [in]: '))
-led = LED(5) # test LED?
+
+#Request angle
+FinalAngle = int(input('Input required final bearing angle [deg]: '))
+
+#Request thread orientation:
+ThreadType = int(input('Specify rod thread type, Normal Thread (1) or Reverse Thread (2): '))
+
+#led = LED(5) # test LED?
 
 #Define both distance sensors
 sensor1 = DistanceSensor(echo=12, trigger=13)
@@ -43,9 +50,14 @@ while(distanceRead1 > lengthRodEnd):
     # when it gets close, slow it down for more precision
     # if(distanceRead1 < lengthRodEnd + 1):
     #     myStepper1.setSpeed(30)
-    myStepper1.oneStep(Adafruit_MotorHAT.FORWARD, Adafruit_MotorHAT.SINGLE)
-    print('Distance Sensor 1: ', distanceRead1)
-    distanceRead1 = sensor1.distance * 100 / 2.54
+    if ThreadType == 1:
+        myStepper1.oneStep(Adafruit_MotorHAT.FORWARD, Adafruit_MotorHAT.DOUBLE)
+        print('Distance Sensor 1: ', distanceRead1)
+        distanceRead1 = sensor1.distance * 100 / 2.54
+    else
+        myStepper1.oneStep(Adafruit_MotorHAT.BACKWARD, Adafruit_MotorHAT.DOUBLE
+        print('Distance Sensor 1: ', distanceRead1)
+        distanceRead1 = sensor1.distance * 100 / 2.54
 
 # MOTOR TWO
 distanceRead2 = sensor2.distance * 100 / 2.54
