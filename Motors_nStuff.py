@@ -6,15 +6,13 @@ import time
 import atexit
 
 # globalize steps and motors
-global m1_steps_taken = 0
-global m2_steps_taken = 0
-global myStepper1
-global myStepper2
+m1_steps_taken = 0
+m2_steps_taken = 0
 
 
 #Request length parameters by user, convert from inches to centimeters for the distance reader
-lengthTotal = int(input('Input total required rod length in inches [in]: '))*2.54
-lengthRodEnd = int(input('Input required distance between rod end and bearing center in inches [in]: '))*2.54
+lengthTotal = int(input('Input total required rod length in inches [in]: '))
+lengthRodEnd = int(input('Input required distance between rod end and bearing center in inches [in]: '))
 
 #Request angle
 FinalAngle = int(input('Input required final bearing angle [deg]: '))
@@ -38,7 +36,7 @@ def doM1StepAndCount(direction=Adafruit_MotorHAT.FORWARD, step_type=Adafruit_Mot
     global myStepper1
     increment = 1 if direction==Adafruit_MotorHAT.FORWARD else -1
     myStepper1.oneStep(direction, step_type)
-    steps_taken = (steps_taken + increment) % STEPS_PER_ROTATION
+    m1_steps_taken = (m1_steps_taken + increment) % STEPS_PER_ROTATION
 
 def doM2StepAndCount(direction=Adafruit_MotorHAT.FORWARD, step_type=Adafruit_MotorHAT.DOUBLE):
     global m2_steps_taken
@@ -66,24 +64,18 @@ sensor2 = DistanceSensor(echo=16, trigger=19)
 STEPS_PER_ROTATION = 200
 
 def angleMotor1(target_angle=FinalAngle):
-    global m1_steps_taken
-    target_steps = int(target_angle * STEPS_PER_ROTATION / 360)
-    if(m1_steps_taken>target_steps):
-        m1_direction = Adafruit_MotorHAT.FORWARD  
-    else:
-        m1_direction = Adafruit_MotorHAT.BACKWARD
-    while(m1_steps_taken!=target_steps):
-        doM1StepAndCount(m1_direction)
+	global m1_steps_taken
+	target_steps = int(target_angle * STEPS_PER_ROTATION / 360) % STEPS_PER_ROTATION
+	m1_direction = Adafruit_MotorHAT.FORWARD
+	while(m1_steps_taken!=target_steps):
+		doM1StepAndCount(m1_direction)
 
 def angleMotor2(target_angle=FinalAngle):
-    global m2_steps_taken
-    target_steps = int(target_angle * STEPS_PER_ROTATION / 360)
-    if(m2_steps_taken>target_steps):
-        m2_direction = Adafruit_MotorHAT.FORWARD  
-    else:
-        m2_direction = Adafruit_MotorHAT.BACKWARD
-    while(m2_steps_taken!=target_steps):
-        doM1StepAndCount(m2_direction)
+	global m2_steps_taken
+	target_steps = int(target_angle * STEPS_PER_ROTATION / 360) % STEPS_PER_ROTATION
+	m2_direction = Adafruit_MotorHAT.BACKWARD
+	while(m2_steps_taken!=target_steps):
+		doM1StepAndCount(m2_direction)
 
 #set stepper motor variables
 myStepper1 = mh.getStepper(STEPS_PER_ROTATION, 1)
@@ -94,29 +86,34 @@ myStepper1.setSpeed(30)
 myStepper2.setSpeed(30)
 
 # MOTOR ONE
-distanceRead1 = sensor1.distance * 100
+distanceRead1 = sensor1.distance * 100 / 2.54
 # if its farther than an inch away, move a full inch?
 # while(distanceRead1 > lengthRodEnd + 1):
 #     myStepper1.step(100, Adafruit_MotorHAT.FORWARD, Adafruit_MotorHAT.SINGLE)
 #     print('Distance Sensor 1: ', distanceRead1)
-#     distanceRead1 = sensor1.distance * 100
-while(distanceRead1 > lengthRodEnd):
-    # Check which direction to move by ThreadType
-    direction = Adafruit_MotorHAT.FORWARD if ThreadType == 1 else Adafruit_MotorHAT.BACKWARD
+#     distanceRead1 = sensor1.distance * 100 / 2.54
+
+# Check which direction to move by ThreadType
+direction = Adafruit_MotorHAT.FORWARD if ThreadType == 1 else Adafruit_MotorHAT.BACKWARD
+
+while(distanceRead1 > lengthRodEnd):  
     doM1StepAndCount(direction,Adafruit_MotorHAT.DOUBLE)
     print('Distance Sensor 1: ', distanceRead1)
-    distanceRead1 = sensor1.distance * 100
+    distanceRead1 = sensor1.distance * 100 / 2.54
 
 # MOTOR TWO
-distanceRead2 = sensor2.distance * 100
+distanceRead2 = sensor2.distance * 100 / 2.54
 while(distanceRead1 + distanceRead2 > lengthTotal):
     doM2StepAndCount(Adafruit_MotorHAT.FORWARD, Adafruit_MotorHAT.SINGLE)
     print('Distance Sensor 2: ', distanceRead2)
-    distanceRead2 = sensor2.distance * 100
+    distanceRead2 = sensor2.distance * 100 / 2.54
 
 #add reverse function if length becomes too short
 while(distanceRead1+distanceRead2 < lengthTotal):
     doM2StepAndCount(dafruit_MotorHAT.BACKWARD,Adafruit_MotorHAT.MICROSTEP)
+
+angleMotor1(FinalAngle)
+angleMotor2(FinalAngle)
 
 # release holders
 
