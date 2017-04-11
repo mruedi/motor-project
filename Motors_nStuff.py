@@ -26,7 +26,7 @@ mh = Adafruit_MotorHAT()
 def turnOffMotors():
     	zeroMotor(1)
     	zeroMotor(2)
-   	 mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
+   	mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
     	mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
 atexit.register(turnOffMotors)
 
