@@ -24,33 +24,33 @@ mh = Adafruit_MotorHAT()
 
 # turn off motors automatically at shutdown
 def turnOffMotors():
-    zeroMotor(1)
-    zeroMotor(2)
-    mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
-    mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
+    	zeroMotor(1)
+    	zeroMotor(2)
+   	 mh.getMotor(1).run(Adafruit_MotorHAT.RELEASE)
+    	mh.getMotor(2).run(Adafruit_MotorHAT.RELEASE)
 atexit.register(turnOffMotors)
 
 # step the motor and count to maintain angle
 def doM1StepAndCount(direction=Adafruit_MotorHAT.FORWARD, step_type=Adafruit_MotorHAT.DOUBLE):
-    global m1_steps_taken
-    global myStepper1
-    increment = 1 if direction==Adafruit_MotorHAT.FORWARD else -1
-    myStepper1.oneStep(direction, step_type)
-    m1_steps_taken = (m1_steps_taken + increment) % STEPS_PER_ROTATION
+   	 global m1_steps_taken
+   	 global myStepper1
+    	increment = 1 if direction==Adafruit_MotorHAT.FORWARD else -1
+   	 myStepper1.oneStep(direction, step_type)
+   	 m1_steps_taken = (m1_steps_taken + increment) % STEPS_PER_ROTATION
 
 def doM2StepAndCount(direction=Adafruit_MotorHAT.FORWARD, step_type=Adafruit_MotorHAT.DOUBLE):
-    global m2_steps_taken
-    global myStepper2
-    increment = 1 if direction==Adafruit_MotorHAT.FORWARD else -1
-    myStepper2.oneStep(direction, step_type)
-    m2_steps_taken = (m2_steps_taken + increment) % STEPS_PER_ROTATION
+    	global m2_steps_taken
+    	global myStepper2
+    	increment = 1 if direction==Adafruit_MotorHAT.FORWARD else -1
+   	myStepper2.oneStep(direction, step_type)
+   	m2_steps_taken = (m2_steps_taken + increment) % STEPS_PER_ROTATION
 
 # move the motors back to 0 degrees
 def zeroMotor(motor_num=0):
-    if(motor_num==1):
-        angleMotor1(0)
-    elif(motor_num==2):
-        angleMotor2(0)
+    	if(motor_num==1):
+        	angleMotor1(0)
+    	elif(motor_num==2):
+        	angleMotor2(0)
 
 #led = LED(5) # test LED?
 
@@ -97,20 +97,20 @@ distanceRead1 = sensor1.distance * 100 / 2.54
 direction = Adafruit_MotorHAT.FORWARD if ThreadType == 1 else Adafruit_MotorHAT.BACKWARD
 
 while(distanceRead1 > lengthRodEnd):  
-    doM1StepAndCount(direction,Adafruit_MotorHAT.DOUBLE)
-    print('Distance Sensor 1: ', distanceRead1)
-    distanceRead1 = sensor1.distance * 100 / 2.54
+   	 doM1StepAndCount(direction,Adafruit_MotorHAT.DOUBLE)
+   	 print('Distance Sensor 1: ', distanceRead1)
+   	 distanceRead1 = sensor1.distance * 100 / 2.54
 
 # MOTOR TWO
 distanceRead2 = sensor2.distance * 100 / 2.54
 while(distanceRead1 + distanceRead2 > lengthTotal):
-    doM2StepAndCount(Adafruit_MotorHAT.FORWARD, Adafruit_MotorHAT.SINGLE)
-    print('Distance Sensor 2: ', distanceRead2)
-    distanceRead2 = sensor2.distance * 100 / 2.54
+    	doM2StepAndCount(Adafruit_MotorHAT.FORWARD, Adafruit_MotorHAT.SINGLE)
+    	print('Distance Sensor 2: ', distanceRead2)
+    	distanceRead2 = sensor2.distance * 100 / 2.54
 
 #add reverse function if length becomes too short
 while(distanceRead1+distanceRead2 < lengthTotal):
-    doM2StepAndCount(dafruit_MotorHAT.BACKWARD,Adafruit_MotorHAT.MICROSTEP)
+   	 doM2StepAndCount(Adafruit_MotorHAT.BACKWARD,Adafruit_MotorHAT.MICROSTEP)
 
 angleMotor1(FinalAngle)
 angleMotor2(FinalAngle)
